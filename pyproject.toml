@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "combinatorials"
+name = "permutations"
 version = "0.1.0"
 description = ""
 authors = ["vronsyn <victor.ronsyn@ugent.be>"]
