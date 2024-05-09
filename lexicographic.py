@@ -9,10 +9,10 @@ def perm_lex_successor(n: int, perm: list[int]) -> list[int]:
     """
     Find the lexicographically next permutation of a sequence of integers.
 
-    :param n: Number of integers in the permutation
-    :param perm: Permutation of integers 1 to n in list form
-    :return: Lexicographically next permutation in list form
-    :raises NoSuccessorError: If the input permutation is the last one in lexicographic order
+    :param n: Number of integers in the permutation.
+    :param perm: Permutation of integers 1 to n in list form.
+    :return: Lexicographically next permutation in list form.
+    :raises NoSuccessorError: If the input permutation is the last one in lexicographic order.
     """
     successor = perm.copy()
 
@@ -42,15 +42,17 @@ def perm_lex_rank(n: int, perm: list[int]) -> int:
     """
     Find the lexicographic rank of a permutation of integers.
 
-    :param n: Number of integers in the permutation
-    :param perm: Permutation of integers 1 to n in list form
-    :return: Lexicographic rank of the permutation
+    :param n: Number of integers in the permutation.
+    :param perm: Permutation of integers 1 to n in list form.
+    :return: Lexicographic rank of the permutation.
     """
     rank = 0
     rho = perm.copy()
     for j in range(n):
         rank = rank + (rho[j] - 1) * math.factorial(n - j - 1)
         for i in range(j + 1, n):
+            # Decrease the value of elements to the right of the current element
+            # that are larger than rho[j]
             if rho[i] > rho[j]:
                 rho[i] = rho[i] - 1
 
@@ -60,34 +62,22 @@ def perm_lex_rank(n: int, perm: list[int]) -> int:
 def perm_lex_unrank(n: int, rank: int) -> list[int]:
     """
     Find the permutation of integers with a given lexicographic rank.
-    :param n: Number of integers in the permutation
-    :param rank: Lexicographic rank of the permutation
-    :return: Permutation of integers 1 to n in list form
+    
+    :param n: Number of integers in the permutation.
+    :param rank: Lexicographic rank of the permutation.
+    :return: Permutation of integers 1 to n in list form.
     """
     perm = np.zeros(n, dtype=int)
     perm[n - 1] = 1
     for j in range(n - 1):
-        numerator = (rank % math.factorial(j + 2))
-        denominator = math.factorial(j + 1)
-        d = numerator / denominator
+        # Calculate the value of the j-th element
+        d = (rank % math.factorial(j + 2)) / math.factorial(j + 1)
+        # Update the rank
         rank = rank - d * math.factorial(j + 1)
         perm[n - j - 2] = d + 1
         for i in range(n - j - 1, n):
+            # Increase the value of elements to the right of the current element
+            # that are larger than d
             if perm[i] > d:
                 perm[i] = perm[i] + 1
     return perm.tolist()
-
-
-
-N = 8
-permutation = np.arange(1, N + 1)
-while True:
-    try:
-        ranked = perm_lex_rank(N, permutation)
-        unranked = perm_lex_unrank(N, ranked)
-        print(ranked, unranked, permutation)
-        assert np.array_equal(unranked, permutation)
-        permutation = perm_lex_successor(N, permutation)
-    except NoSuccessorError:
-        print("finished")
-        break
